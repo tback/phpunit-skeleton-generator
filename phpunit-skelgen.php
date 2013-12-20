@@ -35,10 +35,27 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-if (strpos('@php_bin@', '@php_bin') === 0) {
-    require __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'autoload.php';
-} else {
-    require 'SebastianBergmann/PHPUnit/SkeletonGenerator/autoload.php';
+$files = array(
+	__DIR__ . '/../../vendor/autoload.php',
+	__DIR__ . '/../../../../autoload.php'
+);
+
+foreach ($files as $file) {
+	if (file_exists($file)) {
+		require $file;
+
+		define('PHPUNIT_COMPOSER_INSTALL', $file);
+
+		break;
+	}
+}
+
+if (!defined('PHPUNIT_COMPOSER_INSTALL')) {
+	die(
+		'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+		'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+		'php composer.phar install' . PHP_EOL
+	);
 }
 
 $textui = new SebastianBergmann\PHPUnit\SkeletonGenerator\Command;
